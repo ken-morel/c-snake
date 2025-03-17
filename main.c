@@ -2,14 +2,19 @@
 #include <stdlib.h>
 #include <windows.h>
 #include <conio.h>
+#include <stdio.h>
+#include <sys/ioctl.h>
+#include <unistd.h>
 
-#define WIDTH 35
-#define HEIGHT 35
+
+
 #define COLORS " bgcrmyw-BGCRMYW"
 #define MAX_SNAKE_LEN 100
 #define SNAKE_COLOR 'B'
 #define FOOD_COLOR 'G'
 
+struct winsize w;
+int WIDTH, HEIGHT;
 COORD snake[MAX_SNAKE_LEN];
 int snake_size;
 COORD food;
@@ -22,7 +27,7 @@ enum {
 typedef char Char[3];
 HANDLE handle;
 COORD ScreenSize, coord_zero = {0, 0};
-char BOARD[WIDTH][HEIGHT][3];
+char *(*(*BOARD));  //TODO interactive board size
 CONSOLE_SCREEN_BUFFER_INFO info;
 int gameOver = 0;
 void consoleColor(char fgc, char bgc) {
@@ -124,6 +129,7 @@ void place_food() {
 }
 int main()
 {
+    ioctl(STDOUT_FILENO, TIOCGWINSZ, &w);
     snake[0].X = 2;
     snake[0].Y = 2;
     snake[1].X = 1;
